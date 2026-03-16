@@ -12,10 +12,10 @@ export type News = {
   content: string | null
   url: string
   source: string
-  sourceType: string
+  source_type: string
   author: string | null
-  publishedAt: string
+  published_at: string
   category: string
-  imageUrl: string | null
-  createdAt: string
+  image_url: string | null
+  created_at: string
 }

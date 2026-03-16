@@ -7,7 +7,7 @@ const parser = new Parser()
 
 async function fetchAndSaveNews() {
   const results = {
-    success: 0,
+    savedCount: 0,
     failed: 0,
     errors: [] as string[],
   }
@@ -16,8 +16,18 @@ async function fetchAndSaveNews() {
     try {
       const feed = await parser.parseURL(source.url)
       
-      for (const item of feed.items.slice(0, 10)) {
+      for (const item of feed.items.slice(0, 20)) {
         if (!item.link) continue
+        
+        const title = item.title || ''
+        const description = item.contentSnippet || ''
+        
+        // 对于Twitter类型，只保留原创推文（不含RT）
+        if (source.type === 'twitter') {
+          if (title.startsWith('RT ') || description.startsWith('RT ')) {
+            continue
+          }
+        }
 
         const { error } = await supabase.from('news').upsert(
           {
@@ -26,11 +36,11 @@ async function fetchAndSaveNews() {
             content: item.content || null,
             url: item.link,
             source: source.name,
-            sourceType: source.type,
+            source_type: source.type,
             author: item.creator || item.author || null,
-            publishedAt: item.pubDate ? new Date(item.pubDate) : new Date(),
+            published_at: item.pubDate ? new Date(item.pubDate) : new Date(),
             category: source.category,
-            imageUrl: null,
+            image_url: null,
           },
           { onConflict: 'url' }
         )
@@ -39,7 +49,7 @@ async function fetchAndSaveNews() {
           results.failed++
           results.errors.push(`${source.name}: ${error.message}`)
         } else {
-          results.success++
+          results.savedCount++
         }
       }
     } catch (err) {
@@ -56,7 +66,7 @@ export async function POST() {
     const results = await fetchAndSaveNews()
     return NextResponse.json({
       success: true,
-      ...results,
+      data: results,
       timestamp: new Date().toISOString(),
     })
   } catch (error) {

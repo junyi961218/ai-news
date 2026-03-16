@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   let query = supabase
     .from('news')
     .select('*')
-    .order('publishedAt', { ascending: false })
+    .order('published_at', { ascending: false })
     .limit(limit)
 
   if (category) {
