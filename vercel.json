@@ -1,6 +1,8 @@
 {
-  "/api/refresh": {
-    "schedule": "0 */6 * * *",
-    "destination": "/api/refresh"
-  }
+  "crons": [
+    {
+      "path": "/api/refresh",
+      "schedule": "0 */6 * * *"
+    }
+  ]
 }
