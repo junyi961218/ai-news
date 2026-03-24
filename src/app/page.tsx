@@ -2,6 +2,8 @@ import { supabase, News } from '@/lib/supabase'
 import NewsGrid from '@/components/NewsGrid'
 import FeaturedCard from '@/components/FeaturedCard'
 
+export const revalidate = 60; // 缓存 60 秒自动刷新
+
 async function getNews(category?: string): Promise<News[]> {
   let query = supabase
     .from('news')
