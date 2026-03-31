@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
+
+export const dynamic = 'force-dynamic'
+export const maxDuration = 60 // 延长Vercel函数的最大执行时间，避免因为抓取太慢导致中断
 import Parser from 'rss-parser'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin as supabase } from '@/lib/supabase-admin'
 import { RSS_SOURCES } from '@/lib/rss'
 
 const parser = new Parser()
